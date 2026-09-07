@@ -196,7 +196,34 @@
             <span class="contact-icon" aria-hidden="true">🌐</span>
             <span>allsafe.ovh</span>
           </a>
-          <a class="btn btn-primary contact-cta" href="mailto:nicolas@allsafe.ovh">Envoyer un message</a>
+
+          <form class="contact-form" id="contactForm" novalidate>
+            <div class="form-row">
+              <label for="name">Nom</label>
+              <input type="text" id="name" name="name" autocomplete="name" required>
+            </div>
+            <div class="form-row">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" autocomplete="email" required>
+            </div>
+            <div class="form-row">
+              <label for="subject">Sujet</label>
+              <input type="text" id="subject" name="subject" autocomplete="off">
+            </div>
+            <div class="form-row">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="4" required></textarea>
+            </div>
+
+            <!-- Piège à robots : champ caché, ne pas afficher ni remplir -->
+            <div class="form-honeypot" aria-hidden="true">
+              <label for="website">Laissez ce champ vide</label>
+              <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+
+            <button type="submit" class="btn btn-primary contact-cta">Envoyer un message</button>
+            <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+          </form>
         </div>
       </div>
     </section>

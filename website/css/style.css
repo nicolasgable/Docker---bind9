@@ -372,6 +372,68 @@ section { padding: 88px 0; }
 
 .contact-cta { margin-top: 6px; width: 100%; }
 
+/* Contact form */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-row label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.form-row input,
+.form-row textarea {
+  font: inherit;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--ink);
+  resize: vertical;
+}
+
+.form-row input:focus,
+.form-row textarea:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(47, 180, 255, 0.15);
+}
+
+.contact-form button[type="submit"]:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.form-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.form-status {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  min-height: 1.2em;
+}
+
+.form-status.success { color: #0f9d58; }
+.form-status.error { color: #d93025; }
+
 /* Footer */
 .site-footer {
   border-top: 1px solid var(--border);
