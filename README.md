@@ -21,10 +21,20 @@ déployer sur une VM Ubuntu.
 ├── config/
 │   ├── named.conf.options   # Options globales BIND9 (forwarders, recursion...)
 │   └── named.conf.local     # Déclaration des zones
-└── zones/
-    ├── db.example.local     # Zone directe d'exemple
-    └── db.192.168.1         # Zone inverse d'exemple
+├── zones/
+│   ├── db.example.local     # Zone directe d'exemple
+│   └── db.192.168.1         # Zone inverse d'exemple
+└── rootless-proxy/          # Docker rootless + Nginx Proxy Manager + Dockhand
+    ├── install-docker-rootless.sh
+    ├── deploy-proxy-stack.sh
+    ├── docker-compose.yml
+    └── README.md
 ```
+
+> Le dossier `rootless-proxy/` est indépendant du serveur BIND9 : il installe
+> Docker en mode rootless pour un utilisateur dédié et déploie un reverse
+> proxy (Nginx Proxy Manager + Dockhand) sur la VM. Voir
+> [`rootless-proxy/README.md`](rootless-proxy/README.md) pour l'utilisation.
 
 ## 1. Prérequis sur la VM Ubuntu
 

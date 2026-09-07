@@ -1,0 +1,33 @@
+networks:
+  proxy:
+    name: proxy
+
+services:
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "81:81"
+    volumes:
+      - ./npm/data:/data
+      - ./npm/letsencrypt:/etc/letsencrypt
+    networks:
+      - proxy
+
+  dockhand:
+    image: fnsys/dockhand:latest
+    container_name: dockhand
+    restart: unless-stopped
+    volumes:
+      # Chemin du socket Docker rootless de l'utilisateur (voir .env)
+      - ${DOCKER_SOCK}:/var/run/docker.sock
+      - ./dockhand/data:/app/data
+    networks:
+      - proxy
+    # Pas de "ports:" ici volontairement : Dockhand n'est joignable que via
+    # le réseau docker interne "proxy". Pour y accéder depuis l'extérieur,
+    # créez un "Proxy Host" dans Nginx Proxy Manager pointant vers
+    # dockhand:3000, afin que tout le trafic passe bien par le reverse proxy.
