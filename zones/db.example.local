@@ -1,0 +1,17 @@
+;
+; Zone d'exemple pour example.local
+; A adapter (ou remplacer entierement) via Webmin ou a la main.
+;
+$TTL    604800
+@       IN      SOA     ns1.example.local. admin.example.local. (
+                              3         ; Serial (incrementer a chaque modif manuelle)
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      ns1.example.local.
+ns1     IN      A       192.168.1.10
+www     IN      A       192.168.1.20
+mail    IN      A       192.168.1.30
+@       IN      MX  10  mail.example.local.

@@ -1,0 +1,29 @@
+options {
+    directory "/var/cache/bind";
+
+    // Redirige les requetes que ce serveur ne sait pas resoudre
+    // vers des resolveurs publics. A adapter selon votre reseau.
+    forwarders {
+        1.1.1.1;
+        8.8.8.8;
+    };
+
+    // La recursion est necessaire pour un serveur DNS "resolveur" interne.
+    // Restreignez-la a votre reseau local pour eviter d'exposer un
+    // resolveur ouvert sur Internet (open resolver = risque d'abus DDoS).
+    recursion yes;
+    allow-recursion {
+        127.0.0.1;
+        localnets;
+    };
+
+    listen-on { any; };
+    listen-on-v6 { any; };
+
+    // Personne ne doit pouvoir faire de transfert de zone (AXFR) par defaut.
+    allow-transfer { none; };
+
+    dnssec-validation auto;
+
+    auth-nxdomain no;    # conforme RFC1035
+};

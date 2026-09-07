@@ -1,0 +1,31 @@
+services:
+  bind9-webmin:
+    build: .
+    image: bind9-webmin:latest
+    container_name: bind9-webmin
+    hostname: ns1.example.local
+    restart: unless-stopped
+    environment:
+      - WEBMIN_PASSWORD=${WEBMIN_PASSWORD:-changeme}
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "10000:10000/tcp"
+    volumes:
+      - ./config/named.conf.options:/etc/bind/named.conf.options
+      - ./config/named.conf.local:/etc/bind/named.conf.local
+      - ./zones:/etc/bind/zones
+      - bind9_cache:/var/cache/bind
+      - webmin_config:/etc/webmin
+    cap_add:
+      - NET_BIND_SERVICE
+    healthcheck:
+      test: ["CMD", "dig", "@127.0.0.1", "-p", "53", "example.local", "+time=2", "+tries=1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  bind9_cache:
+  webmin_config:

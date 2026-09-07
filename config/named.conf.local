@@ -1,0 +1,17 @@
+//
+// Declarez ici vos zones DNS locales, ou laissez Webmin les ajouter
+// automatiquement depuis le module "Servers > BIND DNS Server".
+//
+// Zone d'exemple fournie avec ce depot (a adapter ou supprimer) :
+
+zone "example.local" {
+    type master;
+    file "/etc/bind/zones/db.example.local";
+    allow-transfer { none; };
+};
+
+zone "1.168.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/zones/db.192.168.1";
+    allow-transfer { none; };
+};
