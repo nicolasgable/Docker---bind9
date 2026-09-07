@@ -13,6 +13,10 @@
 # réseau et par NPM, qui agit comme unique passerelle. Dockhand n'expose
 # aucun port host et n'est joignable que via NPM sur le réseau "proxy".
 #
+# La stack (docker-compose.yml + volumes des conteneurs) est déployée dans
+# /app, dont la propriété est intégralement donnée à l'utilisateur Docker
+# rootless (pas de fichiers appartenant à root dans cette arborescence).
+#
 # Usage :
 #   sudo ./install-rootless-docker-proxy.sh [utilisateur]
 #
@@ -47,8 +51,9 @@ if ! id "${TARGET_USER}" &>/dev/null; then
 fi
 
 TARGET_UID="$(id -u "${TARGET_USER}")"
+TARGET_GID="$(id -g "${TARGET_USER}")"
 TARGET_HOME="$(getent passwd "${TARGET_USER}" | cut -d: -f6)"
-STACK_DIR="${TARGET_HOME}/proxy-stack"
+STACK_DIR="/app"
 PROXY_NETWORK="proxy"
 XDG_RUNTIME_DIR="/run/user/${TARGET_UID}"
 DOCKER_HOST_SOCK="unix://${XDG_RUNTIME_DIR}/docker.sock"
@@ -139,8 +144,8 @@ sudo -u "${TARGET_USER}" env XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR}" \
 # 6. Préparation de la stack (réseau "proxy" + docker-compose.yml)
 # --------------------------------------------------------------------------
 
-echo "==> Création de l'arborescence de la stack..."
-sudo -u "${TARGET_USER}" mkdir -p \
+echo "==> Création de l'arborescence de la stack dans ${STACK_DIR}..."
+mkdir -p \
   "${STACK_DIR}/npm/data" \
   "${STACK_DIR}/npm/letsencrypt" \
   "${STACK_DIR}/dockhand/data"
@@ -179,7 +184,9 @@ services:
     networks:
       - ${PROXY_NETWORK}
 EOF
-chown -R "${TARGET_USER}:${TARGET_USER}" "${STACK_DIR}"
+
+# /app appartient entièrement à l'utilisateur Docker rootless.
+chown -R "${TARGET_USER}:${TARGET_GID}" "${STACK_DIR}"
 
 # --------------------------------------------------------------------------
 # 7. Création du réseau "proxy" et démarrage de la stack

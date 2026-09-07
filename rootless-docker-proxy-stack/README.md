@@ -45,8 +45,9 @@ Le script :
    démon rootless survive à la déconnexion SSH.
 5. Installe et démarre Docker rootless pour l'utilisateur cible
    (`dockerd-rootless-setuptool.sh`), avec un service systemd `--user`.
-6. Crée le réseau Docker externe `proxy` et génère
-   `~/proxy-stack/docker-compose.yml`, puis lance la stack.
+6. Crée le réseau Docker externe `proxy` et génère `/app/docker-compose.yml`
+   (répertoire `/app` appartenant intégralement à l'utilisateur Docker
+   rootless), puis lance la stack.
 7. Ouvre les ports 80/443/81 dans `ufw` si celui-ci est actif.
 
 ## Après l'installation
@@ -65,7 +66,7 @@ Le script :
 ## Réinitialisation / désinstallation
 
 ```bash
-su - <utilisateur> -c 'docker compose -f ~/proxy-stack/docker-compose.yml down'
+su - <utilisateur> -c 'docker compose -f /app/docker-compose.yml down'
 su - <utilisateur> -c 'dockerd-rootless-setuptool.sh uninstall'
 sudo loginctl disable-linger <utilisateur>
 ```
