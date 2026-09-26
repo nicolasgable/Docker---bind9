@@ -1,0 +1,24 @@
+# Genere automatiquement au demarrage depuis /templates/dovecot/dovecot-ldap.conf.ext
+uris = ${LDAP_URI}
+ldap_version = 3
+tls = ${LDAP_START_TLS_DOVECOT}
+
+# Compte de service utilise pour rechercher le DN de l'utilisateur
+dn = ${LDAP_BIND_DN}
+dnpass = ${LDAP_BIND_PASSWORD}
+
+# Le mot de passe est verifie par un bind LDAP en tant que l'utilisateur :
+# aucun hash de mot de passe n'est lu par Dovecot.
+auth_bind = yes
+
+base = ${LDAP_USER_BASE}
+scope = subtree
+deref = never
+
+# Connexion possible avec l'adresse mail ou l'uid, uniquement pour les
+# membres du groupe mail.
+pass_filter = (&(objectClass=${LDAP_USER_OBJECTCLASS})(|(${LDAP_MAIL_ATTRIBUTE}=%u)(${LDAP_LOGIN_ATTRIBUTE}=%u))${LDAP_GROUP_FILTER})
+
+# Normalise le nom d'utilisateur vers l'adresse mail (=> meme boite quel que
+# soit l'identifiant saisi dans le client mail).
+pass_attrs = =user=%{ldap:${LDAP_MAIL_ATTRIBUTE}}

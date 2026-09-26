@@ -1,0 +1,6 @@
+.env
+dkim/*
+!dkim/.gitkeep
+certs/*
+!certs/.gitkeep
+config/virtual_aliases

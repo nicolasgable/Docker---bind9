@@ -1,5 +1,8 @@
 # BIND9 + Webmin dans Docker
 
+> Ce dépôt contient aussi un **serveur mail** (Postfix + Dovecot + OpenDKIM,
+> authentification LDAP limitée au groupe `mail`) : voir [`mail/README.md`](mail/README.md).
+
 Serveur DNS **BIND9** administrable via une interface web (**Webmin**, module
 "Servers > BIND DNS Server"), packagé dans une seule image Docker, prêt à
 déployer sur une VM Ubuntu.

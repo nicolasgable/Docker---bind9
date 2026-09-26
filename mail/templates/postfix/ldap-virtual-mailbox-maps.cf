@@ -1,0 +1,13 @@
+# Une adresse n'existe que si l'utilisateur LDAP a cet attribut "mail"
+# ET appartient au groupe mail (filtre ${LDAP_GROUP_FILTER}).
+server_host = ${LDAP_URI}
+version = 3
+start_tls = ${LDAP_START_TLS_POSTFIX}
+bind = yes
+bind_dn = ${LDAP_BIND_DN}
+bind_pw = ${LDAP_BIND_PASSWORD}
+search_base = ${LDAP_USER_BASE}
+scope = sub
+query_filter = (&(objectClass=${LDAP_USER_OBJECTCLASS})(${LDAP_MAIL_ATTRIBUTE}=%s)${LDAP_GROUP_FILTER})
+result_attribute = ${LDAP_MAIL_ATTRIBUTE}
+result_format = %d/%u/Maildir/
