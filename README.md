@@ -2,7 +2,9 @@
 
 Serveur DNS **BIND9** administrable via une interface web (**Webmin**, module
 "Servers > BIND DNS Server"), packagé dans une seule image Docker, prêt à
-déployer sur une VM Ubuntu.
+déployer sur une VM **Ubuntu ou Debian** (l'intérieur du conteneur tourne sous
+Ubuntu 22.04 quel que soit l'OS de l'hôte — voir la section 0 ci-dessous,
+« Compatibilité de l'hôte », pour le détail Debian 13).
 
 - BIND9 écoute sur le port **53** (TCP + UDP)
 - Webmin écoute en HTTPS sur le port **10000**
@@ -26,21 +28,41 @@ déployer sur une VM Ubuntu.
     └── db.192.168.1         # Zone inverse d'exemple
 ```
 
-## 1. Prérequis sur la VM Ubuntu
+## 0. Compatibilité de l'hôte (Ubuntu / Debian 13)
 
-Connectez-vous en SSH sur votre VM Ubuntu (20.04/22.04/24.04), puis installez
-Docker et le plugin Compose :
+Ce projet ne dépend de l'hôte que pour faire tourner **Docker Engine + le
+plugin Compose** : l'image se construit sur `ubuntu:22.04` et embarque tout
+son propre userland (BIND9, Webmin, supervisord), donc **l'OS de l'hôte n'a
+aucune influence sur le fonctionnement du conteneur** — Docker partage juste
+le noyau Linux de l'hôte, sans dépendre de sa distribution.
+
+**Debian 13 (Trixie) est donc pleinement compatible**, au même titre
+qu'Ubuntu : le dépôt APT officiel de Docker (`download.docker.com/linux/debian`)
+liste explicitement `trixie` depuis sa sortie, et fournit les mêmes paquets
+(`docker-ce`, `docker-ce-cli`, `containerd.io`, `docker-buildx-plugin`,
+`docker-compose-plugin`) que pour Ubuntu. Seule différence pratique : `ufw`
+n'est pas préinstallé sur Debian (contrairement à Ubuntu Server) — voir
+l'étape 5.
+
+## 1. Prérequis sur la VM Ubuntu ou Debian
+
+Connectez-vous en SSH sur votre VM **Ubuntu (20.04/22.04/24.04)** ou
+**Debian (11 Bullseye / 12 Bookworm / 13 Trixie)**, puis installez Docker et
+le plugin Compose. La commande ci-dessous détecte automatiquement la
+distribution (`$ID`) et sa version (`$VERSION_CODENAME`, ex. `trixie` sur
+Debian 13) à partir de `/etc/os-release`, donc elle est identique sur les
+deux familles d'OS :
 
 ```bash
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y ca-certificates curl gnupg
 
-# Dépôt officiel Docker
+# Dépôt officiel Docker (ubuntu ou debian selon l'hôte, détecté automatiquement)
 sudo install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+curl -fsSL "https://download.docker.com/linux/$(. /etc/os-release && echo "$ID")/gpg" | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 sudo chmod a+r /etc/apt/keyrings/docker.gpg
 echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/$(. /etc/os-release && echo "$ID") \
   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
@@ -94,6 +116,13 @@ docker compose ps
 ```
 
 ## 5. Ouverture du pare-feu (ufw)
+
+`ufw` est préinstallé (mais inactif par défaut) sur Ubuntu Server. Sur
+**Debian, il faut d'abord l'installer** :
+
+```bash
+sudo apt install -y ufw
+```
 
 Si `ufw` est actif sur la VM :
 
